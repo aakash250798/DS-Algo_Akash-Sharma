@@ -1,49 +1,138 @@
 #include <bits/stdc++.h>
-
+#include<cstdio>
+#include<iostream>
 using namespace std;
 
 class Graph {
 private:
 	int n=9;
-    pair<int,int> graph[15][15] = { { {0,0}, {4,300}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {8,600}, {0,0} },
-                             { {4,300}, {0,0}, {8,600}, {0,0}, {0,0}, {0,0}, {0,0}, {11,850}, {0,0} },
-                             { {0,0}, {8,600}, {0,0}, {7,550}, {0,0}, {4,300}, {0,0}, {0,0}, {2,150} },
-                             { {0,0}, {0,0}, {7,550}, {0,0}, {9,650}, {14,1050}, {0,0}, {0,0}, {0,0} },
-                             { {0,0}, {0,0}, {0,0}, {9,650}, {0,0}, {10,750}, {0,0}, {0,0}, {0,0} },
-                             { {0,0}, {0,0}, {4,300}, {14,1050}, {10,750}, {0,0}, {2,150}, {0,0}, {0,0} },
-                             { {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {2,150}, {0,0}, {1,75}, {6,450} },
-                             { {8,600}, {11,850}, {0,0}, {0,0}, {0,0}, {0,0}, {1,75}, {0,0}, {7,550} },
-                             { {0,0}, {0,0}, {2,150}, {0,0}, {0,0}, {0,0}, {6,450}, {7,550}, {0,0} } };
+	int distance[9][9];
+	int fare[9][9];
 
 public:
-
+template<typename T, int height, int width>
+std::ostream& writemap(std::ostream& os, T (&map)[height][width])
+{
+    for (int i = 0; i < height; ++i)
+    {
+        for (int j = 0; j < width; ++j)
+        {
+            os << map[i][j]<<" ";
+        }
+        os<<"\n";
+    }
+    cout<<"------\n";
+    return os;
+}
 	void displayAdjacencyMatrix()
 	{
-		cout << "\n\nAdjacency Matrix:";
+		cout << "\n\nAdjacency Matrix for distance:";
 		for (int i = 0; i < n; ++i) {
 			cout << "\n";
 			for (int j = 0; j < n; ++j) {
-				cout <<graph[i][j].first<<","<<graph[i][j].second<<" ";
+				cout <<distance[i][j]<<" ";
+			}
+			cout<<endl;
+		}
+
+		cout << "\n\n Adjacency Matrix for fare:";
+		for (int i = 0; i < n; ++i) {
+			cout << "\n";
+			for (int j = 0; j < n; ++j) {
+				cout << fare[i][j]<<" ";
 			}
 			cout<<endl;
 		}
 	}
 
-	void addAirport()
+    void addAirport()
 	{
+	    ifstream myfile2; //for reading records
+        myfile2.open("dist.txt");
+        ifstream myfile1; //for reading records
+        myfile1.open("fare.txt");
+
+        ofstream temp;
+        temp.open("temp.txt");
+        ofstream temp1;
+        temp1.open("temp1.txt");
+        for(int row = 0; row < 9; row++){
+        for(int column = 0; column < 9; column++){
+            myfile2 >> distance[row][column];
+            // from fp we read the characters
+        }
+    }
+         for(int row = 0; row < 9; row++){
+        for(int column = 0; column < 9; column++){
+            myfile1 >> fare[row][column];
+            // from fp we read the characters
+        }
+    }
 		n++;
 		int i;
 		for (i = 0; i < n; ++i) {
-			graph[i][n - 1].first= 0;
-			graph[n - 1][i].first = 0;
-			graph[i][n - 1].second = 0;
-			graph[n - 1][i].second = 0;
+			distance[i][n - 1] = 0;
+			distance[n - 1][i] = 0;
+			fare[i][n - 1] = 0;
+			fare[n - 1][i] = 0;
 		}
 		cout<<"\nAirport added successfully!";
+		std::fstream of("temp.txt", std::ios::out | std::ios::app);
+
+    if (of.is_open())
+    {
+        writemap(of, distance);
+        writemap(std::cout, distance);
+        of.close();
+    }
+    myfile2.close();
+    temp.close();
+    remove("dist.txt");
+    char oldname[]="temp.txt";
+    char newname[]="dist.txt";
+    rename(oldname, newname);
+
+    std::fstream of1("temp1.txt", std::ios::out | std::ios::app);
+
+    if (of1.is_open())
+    {
+        writemap(of1, fare);
+        writemap(std::cout, fare);
+        of1.close();
+    }
+    myfile1.close();
+    temp1.close();
+    remove("fare.txt");
+    char oldname1[]="temp1.txt";
+    char newname1[]="fare.txt";
+    rename(oldname1, newname1);
 	}
+
+
 
 	void removeAirport(int x)
 	{
+	    ifstream myfile2; //for reading records
+        myfile2.open("dist.txt");
+        ifstream myfile1; //for reading records
+        myfile1.open("fare.txt");
+
+        ofstream temp;
+        temp.open("temp.txt");
+        ofstream temp1;
+        temp1.open("temp1.txt");
+        for(int row = 0; row < 9; row++){
+        for(int column = 0; column < 9; column++){
+            myfile2 >> distance[row][column];
+            // from fp we read the characters
+        }
+    }
+         for(int row = 0; row < 9; row++){
+        for(int column = 0; column < 9; column++){
+            myfile1 >> fare[row][column];
+            // from fp we read the characters
+        }
+    }
 		if (x > n) {
 			cout << "\nAirport not present!";
 			return;
@@ -52,78 +141,217 @@ public:
 			int i;
 			while (x < n) {
 				for (i = 0; i < n; ++i) {
-					graph[i][x].first = graph[i][x + 1].first;
-					graph[i][x].second = graph[i][x + 1].second;
+					distance[i][x] = distance[i][x + 1];
+					fare[i][x] = fare[i][x + 1];
 				}
 
 				for (i = 0; i < n; ++i) {
-					graph[x][i].first = graph[x + 1][i].first;
-					graph[x][i].second = graph[x + 1][i].second;
+					distance[x][i] = distance[x + 1][i];
+					fare[x][i] = fare[x + 1][i];
 				}
 				x++;
 			}
 			n--;
 		}
 		cout<<"\nAirport deleted successfully!";
+		std::fstream of("temp.txt", std::ios::out | std::ios::app);
+
+    if (of.is_open())
+    {
+        writemap(of, distance);
+        writemap(std::cout, distance);
+        of.close();
+    }
+    myfile2.close();
+    temp.close();
+    remove("dist.txt");
+    char oldname[]="temp.txt";
+    char newname[]="dist.txt";
+    rename(oldname, newname);
+
+    std::fstream of1("temp1.txt", std::ios::out | std::ios::app);
+
+    if (of1.is_open())
+    {
+        writemap(of1, fare);
+        writemap(std::cout, fare);
+        of1.close();
+    }
+    myfile1.close();
+    temp1.close();
+    remove("fare.txt");
+    char oldname1[]="temp1.txt";
+    char newname1[]="fare.txt";
+    rename(oldname1, newname1);
 	}
+
+
+
 
 	void addRoute(int x, int y,int distw,int farew)
     {
-        if ((x >= n) || (y >=n)) {
+
+	    ifstream myfile2; //for reading records
+        myfile2.open("dist.txt");
+        ifstream myfile1; //for reading records
+        myfile1.open("fare.txt");
+
+        ofstream temp;
+        temp.open("temp.txt");
+        ofstream temp1;
+        temp1.open("temp1.txt");
+        for(int row = 0; row < 9; row++){
+        for(int column = 0; column < 9; column++){
+            myfile2 >> distance[row][column];
+            // from fp we read the characters
+        }
+    }
+         for(int row = 0; row < 9; row++){
+        for(int column = 0; column < 9; column++){
+            myfile1 >> fare[row][column];
+            // from fp we read the characters
+        }
+    }
+        if ((x >= n) || (y > n)) {
             cout << "Airport does not exists!";
-            return;
         }
 
         if (x == y) {
             cout << "Same Airport!";
-            return;
         }
         else {
-            graph[y][x].first = distw;
-            graph[x][y].first = distw;
-            graph[x][y].second=farew;
-            graph[y][x].second=farew;
+            distance[y][x] = distw;
+            distance[x][y] = distw;
+            fare[x][y]=farew;
+            fare[y][x]=farew;
         }
         cout<<"\nRoute added successfully!";
-        cout << "\n\nAdjacency Matrix:";
-		for (int i = 0; i < n; ++i) {
-			cout << "\n";
-			for (int j = 0; j < n; ++j) {
-				cout <<graph[i][j].first<<","<<graph[i][j].second<<" ";
-			}
-			cout<<endl;
-		}
+        std::fstream of("temp.txt", std::ios::out | std::ios::app);
+
+    if (of.is_open())
+    {
+        writemap(of, distance);
+        writemap(std::cout, distance);
+        of.close();
     }
+    myfile2.close();
+    temp.close();
+    remove("dist.txt");
+    char oldname[]="temp.txt";
+    char newname[]="dist.txt";
+    rename(oldname, newname);
+
+    std::fstream of1("temp1.txt", std::ios::out | std::ios::app);
+
+    if (of1.is_open())
+    {
+        writemap(of1, fare);
+        writemap(std::cout, fare);
+        of1.close();
+    }
+    myfile1.close();
+    temp1.close();
+    remove("fare.txt");
+    char oldname1[]="temp1.txt";
+    char newname1[]="fare.txt";
+    rename(oldname1, newname1);
+    }
+
+
+
 
     void deleteRoute(int x, int y)
     {
-        if ((x >= n) || (y >= n)) {
+
+         ifstream myfile2; //for reading records
+        myfile2.open("dist.txt");
+        ifstream myfile1; //for reading records
+        myfile1.open("fare.txt");
+
+        ofstream temp;
+        temp.open("temp.txt");
+        ofstream temp1;
+        temp1.open("temp1.txt");
+        for(int row = 0; row < 9; row++){
+        for(int column = 0; column < 9; column++){
+            myfile2 >> distance[row][column];
+            // from fp we read the characters
+        }
+    }
+         for(int row = 0; row < 9; row++){
+        for(int column = 0; column < 9; column++){
+            myfile1 >> fare[row][column];
+            // from fp we read the characters
+        }
+    }
+        if ((x >= n) || (y > n)) {
             cout << "Airport does not exists!";
-            return;
         }
         if (x == y) {
             cout << "Same Airport!";
-            return;
         }
         else {
-            graph[y][x].first = 0;
-            graph[x][y].first = 0;
-            graph[y][x].second=0;
-            graph[x][y].second=0;
+            distance[y][x] = 0;
+            distance[x][y] = 0;
+            fare[y][x]=0;
+            fare[x][y]=0;
         }
         cout<<"\nRoute deleted successfully!";
-        cout << "\n\nAdjacency Matrix:";
-		for (int i = 0; i < n; ++i) {
-			cout << "\n";
-			for (int j = 0; j < n; ++j) {
-				cout <<graph[i][j].first<<","<<graph[i][j].second<<" ";
-			}
-			cout<<endl;
-		}
+        std::fstream of("temp.txt", std::ios::out | std::ios::app);
+
+    if (of.is_open())
+    {
+        writemap(of, distance);
+        writemap(std::cout, distance);
+        of.close();
     }
+    myfile2.close();
+    temp.close();
+    remove("dist.txt");
+    char oldname[]="temp.txt";
+    char newname[]="dist.txt";
+    rename(oldname, newname);
+
+    std::fstream of1("temp1.txt", std::ios::out | std::ios::app);
+
+    if (of1.is_open())
+    {
+        writemap(of1, fare);
+        writemap(std::cout, fare);
+        of1.close();
+    }
+    myfile1.close();
+    temp1.close();
+    remove("fare.txt");
+    char oldname1[]="temp1.txt";
+    char newname1[]="fare.txt";
+    rename(oldname1, newname1);
+    }
+
 
     void update(int x, int y,int dist_u,int fare_u)
     {
+        ifstream myfile2; //for reading records
+        myfile2.open("dist.txt");
+        ifstream myfile1; //for reading records
+        myfile1.open("fare.txt");
+
+        ofstream temp;
+        temp.open("temp.txt");
+        ofstream temp1;
+        temp1.open("temp1.txt");
+        for(int row = 0; row < 9; row++){
+        for(int column = 0; column < 9; column++){
+            myfile2 >> distance[row][column];
+            // from fp we read the characters
+        }
+    }
+         for(int row = 0; row < 9; row++){
+        for(int column = 0; column < 9; column++){
+            myfile1 >> fare[row][column];
+            // from fp we read the characters
+        }
+    }
         if ((x >= n) || (y >=n)) {
             cout << "Airport does not exists!";
             return;
@@ -134,21 +362,44 @@ public:
             return;
         }
         else {
-            graph[y][x].first = dist_u;
-            graph[x][y].first = dist_u;
-            graph[x][y].second=fare_u;
-            graph[y][x].second=fare_u;
+            distance[y][x] = dist_u;
+            distance[x][y] = dist_u;
+            fare[x][y]=fare_u;
+            fare[y][x]=fare_u;
         }
-        cout<<"\nRoute updated successfully!";
-        cout << "\n\nAdjacency Matrix:";
-		for (int i = 0; i < n; ++i) {
-			cout << "\n";
-			for (int j = 0; j < n; ++j) {
-				cout <<graph[i][j].first<<","<<graph[i][j].second<<" ";
-			}
-			cout<<endl;
-		}
+        cout<<"\nRoute & Fare updated successfully!";
+        std::fstream of("temp.txt", std::ios::out | std::ios::app);
+
+    if (of.is_open())
+    {
+        writemap(of, distance);
+        writemap(std::cout, distance);
+        of.close();
     }
+    myfile2.close();
+    temp.close();
+    remove("dist.txt");
+    char oldname[]="temp.txt";
+    char newname[]="dist.txt";
+    rename(oldname, newname);
+
+    std::fstream of1("temp1.txt", std::ios::out | std::ios::app);
+
+    if (of1.is_open())
+    {
+        writemap(of1, fare);
+        writemap(std::cout, fare);
+        of1.close();
+    }
+    myfile1.close();
+    temp1.close();
+    remove("fare.txt");
+    char oldname1[]="temp1.txt";
+    char newname1[]="fare.txt";
+    rename(oldname1, newname1);
+    }
+
+
 
     int minDistance(int dist[], bool visited[])
     {
@@ -164,14 +415,30 @@ public:
 
     void srctoallnodes()
     {
-        cout<<"\nEnter source airport: ";
-        int src;
-        cin>>src;
-        if(src>=n){
-            cout<<"\nAiport does not exist!";
-            return;
+        ifstream myfile2; //for reading records
+        myfile2.open("dist.txt");
+        ifstream myfile1; //for reading records
+        myfile1.open("fare.txt");
+
+        ofstream temp;
+        temp.open("temp.txt");
+        ofstream temp1;
+        temp1.open("temp1.txt");
+        for(int row = 0; row < 9; row++){
+        for(int column = 0; column < 9; column++){
+            myfile2 >> distance[row][column];
+            // from fp we read the characters
         }
-        else{
+    }
+         for(int row = 0; row < 9; row++){
+        for(int column = 0; column < 9; column++){
+            myfile1 >> fare[row][column];
+            // from fp we read the characters
+        }
+    }
+        int src;
+        cout<<"\nEnter source airport:";
+        cin>>src;
         int dist[n];
 
         bool visited[n];
@@ -185,8 +452,8 @@ public:
 
             visited[u] = true;
             for (int v = 0; v < n; v++){
-                if (!visited[v] && graph[u][v].first && dist[u] != INT_MAX && dist[u] + graph[u][v].first < dist[v]){
-                    dist[v] = dist[u] + graph[u][v].first;
+                if (!visited[v] && distance[u][v] && dist[u] != INT_MAX && dist[u] + distance[u][v] < dist[v]){
+                    dist[v] = dist[u] + distance[u][v];
                 }
             }
         }
@@ -194,11 +461,175 @@ public:
         for (int i = 0; i < n; i++){
             cout<<"\n"<<i<<"\t\t"<<dist[i];
         }
+         myfile2.close();
+          myfile1.close();
+    }
+
+    void srctodest_distance()
+    {
+        ifstream myfile2; //for reading records
+        myfile2.open("dist.txt");
+        ifstream myfile1; //for reading records
+        myfile1.open("fare.txt");
+
+        ofstream temp;
+        temp.open("temp.txt");
+        ofstream temp1;
+        temp1.open("temp1.txt");
+        for(int row = 0; row < 9; row++){
+        for(int column = 0; column < 9; column++){
+            myfile2 >> distance[row][column];
+            // from fp we read the characters
+        }
+    }
+         for(int row = 0; row < 9; row++){
+        for(int column = 0; column < 9; column++){
+            myfile1 >> fare[row][column];
+            // from fp we read the characters
+        }
+    }
+        int src;
+        cout<<"\nEnter source airport:";
+        cin>>src;
+        int dest;
+        cout<<"\nEnter destination airport:";
+        cin>>dest;
+        int dist[n];
+
+        bool visited[n];
+
+        for (int i = 0; i < n; i++){
+            dist[i] = INT_MAX, visited[i] = false;
+        }
+        dist[src] = 0;
+        for (int cnt = 0; cnt < n - 1; cnt++) {
+            int u = minDistance(dist, visited);
+
+            visited[u] = true;
+            for (int v = 0; v < n; v++){
+                if (!visited[v] && distance[u][v] && dist[u] != INT_MAX && dist[u] + distance[u][v] < dist[v]){
+                    dist[v] = dist[u] + distance[u][v];
+                }
+            }
+        }
+        if(src< dest)
+    {
+        cout<<"\nDistance from Source: "<<src<<" to destination: "<<dest<<" is: ";
+        for (int i = src; i <= dest; i++)
+       {
+           if(i==dest){
+            cout<<dist[i]<<"\n";}
+        }
+    }
+    else
+    {
+        cout<<"\nDistance from Source: "<<src<<" to destination: "<<dest<<" is: ";
+        for (int i = dest; i <= src; i++)
+       {
+           if(i==dest){
+            cout<<dist[i]<<"\n";}
         }
     }
 
+         myfile2.close();
+          myfile1.close();
+    }
+    void srctodest_fare()
+    {
+        ifstream myfile2; //for reading records
+        myfile2.open("dist.txt");
+        ifstream myfile1; //for reading records
+        myfile1.open("fare.txt");
+
+        ofstream temp;
+        temp.open("temp.txt");
+        ofstream temp1;
+        temp1.open("temp1.txt");
+        for(int row = 0; row < 9; row++){
+        for(int column = 0; column < 9; column++){
+            myfile2 >> distance[row][column];
+            // from fp we read the characters
+        }
+    }
+         for(int row = 0; row < 9; row++){
+        for(int column = 0; column < 9; column++){
+            myfile1 >> fare[row][column];
+            // from fp we read the characters
+        }
+    }
+        int src;
+        cout<<"\nEnter source airport:";
+        cin>>src;
+        int dest;
+        cout<<"\nEnter destination airport:";
+        cin>>dest;
+
+        int dist[n];
+
+        bool visited[n];
+
+        for (int i = 0; i < n; i++){
+            dist[i] = INT_MAX, visited[i] = false;
+        }
+        dist[src] = 0;
+        for (int cnt = 0; cnt < n - 1; cnt++) {
+            int u = minDistance(dist, visited);
+
+            visited[u] = true;
+            for (int v = 0; v < n; v++){
+                if (!visited[v] && fare[u][v] && dist[u] != INT_MAX && dist[u] + fare[u][v] < dist[v]){
+                    dist[v] = dist[u] + fare[u][v];
+                }
+            }
+        }
+
+    if(src< dest)
+    {
+        cout<<"\nMinimum fare from Source Airport: "<<src<<" to destination Airport: "<<dest<<" is: ";
+        for (int i = src; i <= dest; i++)
+       {
+           if(i==dest){
+            cout<<dist[i]<<"\n";}
+        }
+    }
+    else
+    {
+        cout<<"\nMinimum fare from Source Airport: "<<src<<" to destination Airport: "<<dest<<" is: ";
+        for (int i = dest; i <= src; i++)
+       {
+           if(i==dest){
+            cout<<dist[i]<<"\n";}
+        }
+    }
+
+         myfile2.close();
+          myfile1.close();
+    }
+
+
     void srctodest()
     {
+        ifstream myfile2; //for reading records
+        myfile2.open("dist.txt");
+        ifstream myfile1; //for reading records
+        myfile1.open("fare.txt");
+
+        ofstream temp;
+        temp.open("temp.txt");
+        ofstream temp1;
+        temp1.open("temp1.txt");
+        for(int row = 0; row < 9; row++){
+        for(int column = 0; column < 9; column++){
+            myfile2 >> distance[row][column];
+            // from fp we read the characters
+        }
+    }
+         for(int row = 0; row < 9; row++){
+        for(int column = 0; column < 9; column++){
+            myfile1 >> fare[row][column];
+            // from fp we read the characters
+        }
+    }
         cout<<"\nEnter source airport: ";
         int src;
         cin>>src;
@@ -222,8 +653,8 @@ public:
             int u = minDistance(dist, visited);
             visited[u] = true;
             for (int v = 0; v < n; v++){
-                if (!visited[v] && graph[u][v].first && dist[u] != INT_MAX && dist[u] + graph[u][v].first < dist[v]){
-                    dist[v] = dist[u] + graph[u][v].first;
+                if (!visited[v] && distance[u][v] && dist[u] != INT_MAX && dist[u] + distance[u][v] < dist[v]){
+                    dist[v] = dist[u] + distance[u][v];
                 }
             }
         }
@@ -248,11 +679,36 @@ public:
            }
         }
         }
+        myfile2.close();
+          myfile1.close();
     }
+
+
 
     void floyydwarshall()
     {
 
+        ifstream myfile2; //for reading records
+        myfile2.open("dist.txt");
+        ifstream myfile1; //for reading records
+        myfile1.open("fare.txt");
+
+        ofstream temp;
+        temp.open("temp.txt");
+        ofstream temp1;
+        temp1.open("temp1.txt");
+        for(int row = 0; row < 9; row++){
+        for(int column = 0; column < 9; column++){
+            myfile2 >> distance[row][column];
+            // from fp we read the characters
+        }
+    }
+         for(int row = 0; row < 9; row++){
+        for(int column = 0; column < 9; column++){
+            myfile1 >> fare[row][column];
+            // from fp we read the characters
+        }
+    }
         for(int src=0;src<n;src++){cout<<"\n\n------FOR "<<src<<"th Airport----------\n";
 
         int dist[n];
@@ -266,8 +722,8 @@ public:
 
             visited[u] = true;
             for (int v = 0; v < n; v++){
-                if (!visited[v] && graph[u][v].first && dist[u] != INT_MAX && dist[u] + graph[u][v].first < dist[v]){
-                    dist[v] = dist[u] + graph[u][v].first;
+                if (!visited[v] && distance[u][v] && dist[u] != INT_MAX && dist[u] + distance[u][v] < dist[v]){
+                    dist[v] = dist[u] + distance[u][v];
                 }
             }
         }
@@ -275,7 +731,10 @@ public:
         for (int i = 0; i < n; i++){
             cout<<"\n"<<i<<"\t\t"<<dist[i];
         }
-    }}
+    }
+    myfile2.close();
+          myfile1.close();
+    }
 
     int minfare(int fare[], bool visited[])
     {
@@ -291,6 +750,27 @@ public:
 
     void fares()
     {
+        ifstream myfile2; //for reading records
+        myfile2.open("dist.txt");
+        ifstream myfile1; //for reading records
+        myfile1.open("fare.txt");
+
+        ofstream temp;
+        temp.open("temp.txt");
+        ofstream temp1;
+        temp1.open("temp1.txt");
+        for(int row = 0; row < 9; row++){
+        for(int column = 0; column < 9; column++){
+            myfile2 >> distance[row][column];
+            // from fp we read the characters
+        }
+    }
+         for(int row = 0; row < 9; row++){
+        for(int column = 0; column < 9; column++){
+            myfile1 >> fare[row][column];
+            // from fp we read the characters
+        }
+    }
         cout<<"\nEnter Source Airport: ";
         int src;
         cin>>src;
@@ -312,8 +792,8 @@ public:
 
             visited[u] = true;
             for (int v = 0; v < n; v++){
-                if (!visited[v] && graph[u][v].second && fa[u] != INT_MAX && fa[u] + graph[u][v].second < fa[v]){
-                    fa[v] = fa[u] + graph[u][v].second;
+                if (!visited[v] && fare[u][v] && fa[u] != INT_MAX && fa[u] + fare[u][v]< fa[v]){
+                    fa[v] = fa[u] + fare[u][v];
                 }
             }
         }
@@ -322,6 +802,8 @@ public:
             cout<<"\n"<<i<<"\t\t"<<fa[i];
         }
     }
+    myfile2.close();
+          myfile1.close();
     }
 };
 
@@ -429,4 +911,3 @@ int main()
 }
 cout<<"\n*************** THANKS FOR VISITING **************************\n";
 }
-
